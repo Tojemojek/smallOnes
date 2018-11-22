@@ -7,56 +7,50 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import pl.kostrowski.sudoku.service.FindPossibilities;
+import pl.kostrowski.sudoku.model.Sudoku;
+import pl.kostrowski.sudoku.service.MakeWork;
 
 @Controller
 public class OnlyController {
 
     @Autowired
-    FindPossibilities findPossibilities;
+    MakeWork makeWork;
 
     @RequestMapping(value = "/")
-    public String display(Model model,@RequestParam(value = "rows[]", defaultValue = "1") String[] rows){
+    public String display(Model model){
 
-        String[][] possibleOptions;
-        String[][] style;
+        Sudoku sudoku = makeWork.importData(null);
 
-        if (rows.length != 81){
-            possibleOptions = findPossibilities.createEmptyInput();
-        } else {
-            possibleOptions = findPossibilities.findPossibleOptions(rows);
-        }
-
-        style = findPossibilities.createStyleSheet();
-
-        model.addAttribute("possibleOptions",possibleOptions);
-        model.addAttribute("style",style);
+        model.addAttribute("possibleOptions",sudoku.getOutput());
+        model.addAttribute("style",sudoku.getStyle());
+        model.addAttribute("sudoku",sudoku);model.addAttribute("sudoku",sudoku);
         return "index";
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "/array", method = RequestMethod.POST)
     public String displaySuggetion(Model model, @RequestParam(value = "rows[]", defaultValue = "1") String[] rows){
 
-        String[][] style;
-        if (rows.length != 81){
-            rows = new String[81];
-        }
+        Sudoku sudoku = makeWork.importData(rows);
 
-        String[][] possibleOptions = findPossibilities.findPossibleOptions(rows);
-
-        style = findPossibilities.createStyleSheet();
-
-        model.addAttribute("possibleOptions",possibleOptions);
-        model.addAttribute("style",style);
-
+        model.addAttribute("possibleOptions",sudoku.getOutput());
+        model.addAttribute("style",sudoku.getStyle());
+        model.addAttribute("sudoku",sudoku);
         return "index";
     }
 
-    @RequestMapping(value = "/reset", method = RequestMethod.POST)
-    public String reset(){
+    @RequestMapping(value = "/text", method = RequestMethod.POST)
+    public String displaySuggetion(Model model, @RequestParam(value = "input", defaultValue = "1") String input){
 
-        findPossibilities.reset();
-        return "redirect:index";
+        input = input.replaceAll("\n","").replaceAll("\r","");
+        String[] rows = input.split(",");
+
+        Sudoku sudoku = makeWork.importData(rows);
+
+        model.addAttribute("possibleOptions",sudoku.getOutput());
+        model.addAttribute("style",sudoku.getStyle());
+        model.addAttribute("sudoku",sudoku);
+
+        return "index";
     }
 
 }

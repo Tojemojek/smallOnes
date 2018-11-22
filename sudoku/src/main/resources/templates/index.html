@@ -21,23 +21,30 @@
     <p>
         No hejka
     </p>
-    <form th:action="@{/}" method="post">
+
+    <form th:action="@{/text}" method="post">
+        <div class="container">
+            <div class="col-md-12">
+                <textarea name="input"></textarea>
+                <button class="btn btn-success" type="submit">Wyślij tekst</button>
+            </div>
+        </div>
+    </form>
+
+    <form th:action="@{/array}" method="post">
         <table class="table table-bordered">
             <div th:each="i : ${#numbers.sequence( 0, 8)}">
                 <tr>
                     <div th:each="j: ${#numbers.sequence( 0, 8)}" th:remove="tag">
                         <td>
-                            <input th:if="${possibleOptions[i][j].length() == 1}" th:class="${style[i][j]}" th:type="text" th:name="'rows[]'"
+                            <input th:class="${style[i][j]}" th:type="text" th:name="'rows[]'"
                                    th:id="'rows'+${i}+${j}" th:size="6" th:value="${possibleOptions[i][j]}">
-                            <input th:unless="${possibleOptions[i][j].length() == 1}"
-                                   th:type="text" th:name="'rows[]'"
-                                   th:id="'rows'+${i}+${j}" th:size="6">
                         </td>
-                        <td th:if="${j % 3 == 2 && j != 8}">
+                        <td th:if="${j % 3 == 2}">
                         </td>
                     </div>
                 </tr>
-                <tr th:if="${i % 3 == 2 && i != 8}">
+                <tr th:if="${i % 3 == 2}">
                     <td th:each="j: ${#numbers.sequence( 0, 8)}">
                     </td>
                 </tr>
@@ -46,14 +53,11 @@
         <button type="submit" class="btn btn-default">Submit</button>
     </form>
 
-    <form th:action="@{/reset}" method="post">
-        <button type="submit" class="btn btn-default">Reset</button>
-    </form>
-
+    <p></p>
     <table class="table table-bordered">
-        <div th:each="i : ${#numbers.sequence( 0, 9)}">
+        <div th:each="i : ${#numbers.sequence( 0, 8)}">
             <tr>
-                <div th:each="j: ${#numbers.sequence( 0, 9)}" th:remove="tag">
+                <div th:each="j: ${#numbers.sequence( 0, 8)}" th:remove="tag">
                     <td th:utext="${possibleOptions[i][j]}">
                     </td>
                     <td th:if="${j % 3 == 2}">
@@ -66,6 +70,19 @@
             </tr>
         </div>
     </table>
+
+    <div>
+        <p>Opcje wierszy</p>
+        <span th:text="${sudoku.getOptionsRows().toString()}"></span>
+    </div>
+    <div>
+        <p>Opcje kolumn</p>
+        <span th:text="${sudoku.getOptionsColumns().toString()}"></span>
+    </div>
+    <div>
+        <p>Opcje pól</p>
+        <span th:text="${sudoku.getOptionsFields().toString()}"></span>
+    </div>
 
 </div>
 
